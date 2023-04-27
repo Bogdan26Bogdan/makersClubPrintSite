@@ -18,8 +18,8 @@ import printer
 
 
 
-x = printer.Printer("1", "Working")
-print(f"Object id of the newly added printer: {db.add_value(x)}")
+x = printer.Printer("3", "Working")
+print(f"Object id of the newly added printer: {db.delete_value(x)}")
 print(db.find_object(x.data, {"ID": "1"}))
 
 

@@ -79,6 +79,16 @@ class Database:
 
         return objectID
 
+    def delete_value(self, value) -> None:
+        """Deletes the specified value assuming that it exists. Nothing happens if the value does not exist."""
+        self._check_connections()
+        collection = self.db[value.data]
+
+        collection.delete_one(value.to_dictionary())
+
+        self._clean_connections()
+
+
     def find_object(
         self, collection: str, primary_key: dict, return_values: dict = None
     ) -> list[dict]:
