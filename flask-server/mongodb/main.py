@@ -5,5 +5,11 @@ import os
 username = os.environ.get("username") 
 password = os.environ.get("password")
 
-import connect
-connect.connect_to_db(username, password)
+import database
+db = database.Database(username, password)
+print(db.get_all_collections())
+
+
+
+
+
