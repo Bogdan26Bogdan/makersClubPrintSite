@@ -2,5 +2,7 @@ env/
 .env
 __pycache__
 *.swp
+.azure/
+.vscode/
 
 
