@@ -1,3 +1,6 @@
+import database
+from order import Order, create_order
+from file import File
 from flask import Flask, send_from_directory, request, redirect, url_for
 import os
 import sys
@@ -7,6 +10,7 @@ from flask_cors import CORS
 
 # For loading the environement variables
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 DB_USERNAME = os.environ.get("username")
@@ -14,15 +18,13 @@ DB_PASSWORD = os.environ.get("password")
 
 # Imports the file class
 script_dir = os.path.dirname(__file__)
-mymodule_dir = os.path.join(script_dir, "..", "classes")
+mymodule_dir = os.path.join(script_dir, "classes")
 sys.path.append(mymodule_dir)
-from file import File
 
 # imports the database class
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, "mongodb")
 sys.path.append(mymodule_dir)
-import database
 
 app = Flask(__name__)
 # Implements CORS
@@ -64,17 +66,27 @@ def form_submittion():
             return failed
 
         ID = request.form["ID"]  # Holds the ID from the form
-        color = request.form["color"]  # Holds the chosen color from the form
+        # Holds the chosen color from the form
+        filament_color = request.form["color"]
 
-        # Create the file object that we will be uploading to
-        obj = File(ID, "TODO: REPLACE WITH THE UNIQUE ORDER NUMBER", file)
+        # grabs the name of the file to use as the print title
+        print_title = secure_filename(file.filename)
+
+        # Create the order and get the order number
+        order_obj = create_order(filament_color, print_title, ID)
+
+        # Create the file object that we will be uploading to the db
+        obj = File(ID, order_obj.order_number, file)
 
         # Create a database object
         db = database.Database(DB_USERNAME, DB_PASSWORD)
 
+        # Upload the order to the database
+        db.add_value(order_obj)
+
         # Add the file to the database
         return str(db.add_value(obj))
-    return '''
+    return """
     <!doctype html>
     <title>Upload new File</title>
     <h1>Upload new File</h1>
@@ -84,11 +96,12 @@ def form_submittion():
       <input type=file name=file>
       <input type=submit value=Upload>
     </form>
-    '''
+    """
+
 
 @app.route("/")
 def hello():
-    return redirect(url_for('form_submittion'))
+    return redirect(url_for("form_submittion"))
 
 
 if __name__ == "__main__":
