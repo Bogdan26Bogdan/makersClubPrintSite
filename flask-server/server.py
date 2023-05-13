@@ -1,6 +1,3 @@
-import database
-from order import Order, create_order
-from file import File
 from flask import Flask, send_from_directory, request, redirect, url_for
 import os
 import sys
@@ -16,15 +13,21 @@ load_dotenv()
 DB_USERNAME = os.environ.get("username")
 DB_PASSWORD = os.environ.get("password")
 
-# Imports the file class
+# adds the classes folder to the path
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, "classes")
 sys.path.append(mymodule_dir)
 
-# imports the database class
+# adds the mongodb folder to the path
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, "mongodb")
 sys.path.append(mymodule_dir)
+
+#remaining imports
+import database
+from order import Order, create_order
+from file import File
+
 
 app = Flask(__name__)
 # Implements CORS
