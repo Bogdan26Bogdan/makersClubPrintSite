@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request, redirect, url_for
+from flask import Flask, send_from_directory, request, redirect, url_for, render_template
 import os
 import sys
 
@@ -79,27 +79,32 @@ def form_submittion():
         order_obj = create_order(filament_color, print_title, ID)
 
         # Create the file object that we will be uploading to the db
-        obj = File(ID, order_obj.order_number, file)
+        file_obj = File(ID, order_obj.order_number, file)
 
         # Create a database object
         db = database.Database(DB_USERNAME, DB_PASSWORD)
 
-        # Upload the order to the database
+        # Upload the order and file to the database
         db.add_value(order_obj)
+        db.add_value(file_obj)
+    
+    #redirects back to the testing page 
+    return redirect(url_for("testing_page"))
 
-        # Add the file to the database
-        return str(db.add_value(obj))
-    return """
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type="text" id="ID" name="ID"> 
-      <input type="text" id="color" name="color">
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    """
+@app.route("/flask/testing/")
+def testing_page(): 
+    # Create a database object
+    db = database.Database(DB_USERNAME, DB_PASSWORD)
+
+    #Get all the orders
+    search = {"data": "Order"}
+    returned = {"_id" : 0, "print_title": 1,
+                "filament_colour": 1, "order_date": 1}
+    orders = db.find_object("Order", search, returned)
+    orders = [list(i.values()) for i in orders]
+
+    print(orders)
+    return render_template("testing.html", orders=orders)
 
 
 @app.route("/")
