@@ -1,0 +1,26 @@
+
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post action="/flask/submit_form" enctype=multipart/form-data>
+      <input type="text" id="ID" name="ID"> 
+      <input type="text" id="color" name="color">
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+	<h1>Orders</h1>
+	<table>
+		<tr>
+			<th>Print title</th>
+			<th>Filament Colour</th> 
+			<th>Order Date</th>
+		</tr>
+	{% for order in orders %} 
+		<tr>
+			{% for data in order %}
+				<td>{{data}}</td>
+			{% endfor %} 
+		</tr> 
+	{% endfor %}
+	</table>
+    
