@@ -1,6 +1,6 @@
 from data import Data
 from typing import IO
-from bson.binary import Binary
+import bson.binary
 
 
 class File(Data):
@@ -10,17 +10,14 @@ class File(Data):
         super().__init__()
         self.student_id = student_id
         self.order_number = order_number
-        self.file = file
+        self.file = file.read()
 
     def to_dictionary(self):
         # get all but the file
         the_dictionary = {
             k: v
             for k, v in self.__dict__.items()
-            if not (k.startswith("__") and k.endswith("__") or k == "file")
+            if not (k.startswith("__") and k.endswith("__"))
         }
-
-        file_bin = Binary(self.file.read())
-        the_dictionary["file"] = file_bin
 
         return the_dictionary
