@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
 load_dotenv()
-DB_USERNAME = os.environ.get("username")
-DB_PASSWORD = os.environ.get("password")
+DB_USERNAME = os.environ.get("db_username")
+DB_PASSWORD = os.environ.get("db_password")
 
 # adds the classes folder to the path
 script_dir = os.path.dirname(__file__)
