@@ -1,4 +1,4 @@
-from data import Data
+from classes.data import Data
 
 
 class Student_Account(Data):

@@ -1,4 +1,4 @@
-from data import Data
+from classes.data import Data
 from typing import IO
 import bson.binary
 
