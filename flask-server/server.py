@@ -45,14 +45,14 @@ def allowed_file(filename):
 
 
 @app.route("/flask/submit_form/", methods=["GET", "POST"])
-def form_submittion():
+def file_submittion():
     if request.method == "POST":
         failed = []
 
         # Check that parts of the form are filled out
-        if "ID" not in request.form:
+        if "ID" not in request.form or request.form["ID"] == "":
             failed.append("ID")
-        if "color" not in request.form:
+        if "color" not in request.form or request.form["color"] == "":
             failed.append("color")
 
         # Checks if a proper file was uploaded
@@ -108,11 +108,15 @@ def testing_page():
 
 @app.route("/")
 def hello():
-    return redirect(url_for("form_submittion"))
+    return redirect(url_for("home"))
 
 @app.route("/index")
-def index():
+def home():
     return render_template("index.html")
+
+@app.route("/file_upload")
+def file_upload():
+    return render_template("fileSubmittion.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

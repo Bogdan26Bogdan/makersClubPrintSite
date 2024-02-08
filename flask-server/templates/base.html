@@ -11,7 +11,8 @@
         <h1>3D Printing Club</h1>
         <nav>
             <ul>
-                <li><a href="">Home</a></li>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('file_upload') }}">File Submission</a></li>
             </ul>
         </nav>
     </header>
@@ -20,7 +21,7 @@
         {% endblock %}
     </div>
     <footer>
-        <p>&copy; 2024 3D Printing Club</p>
+        Meetings are on Mondays.
     </footer>
 </body>
 </html>
