@@ -106,11 +106,13 @@ def testing_page():
     print(orders)
     return render_template("testing.html", orders=orders)
 
-
 @app.route("/")
 def hello():
     return redirect(url_for("form_submittion"))
 
+@app.route("/index")
+def index():
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
