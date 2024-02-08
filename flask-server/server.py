@@ -35,7 +35,7 @@ CORS(app)
 
 # Cap file size at 15MB
 app.config["MAX_CONTENT_LENGTH"] = 15 * 1000 * 1000
-ALLOWED_EXTENSIONS = {"gcode", "txt"}
+ALLOWED_EXTENSIONS = {"gcode", "txt", "stl"}
 
 # Helper function for file handling
 
@@ -67,7 +67,7 @@ def form_submittion():
         # were not properly supplied
         if len(failed) != 0:
             return failed
-
+        
         ID = request.form["ID"]  # Holds the ID from the form
         # Holds the chosen color from the form
         filament_color = request.form["color"]
