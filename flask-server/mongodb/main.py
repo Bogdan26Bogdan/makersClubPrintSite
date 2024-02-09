@@ -2,8 +2,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import os 
-username = os.environ.get("username") 
-password = os.environ.get("password")
+username = os.environ.get("db_username") 
+password = os.environ.get("db_password")
 
 import database
 db = database.Database(username, password)
@@ -12,7 +12,7 @@ db = database.Database(username, password)
 
 import sys
 script_dir = os.path.dirname( __file__ )
-mymodule_dir = os.path.join( script_dir, '..', ".." , "classes")
+mymodule_dir = os.path.join( script_dir, '..', "classes")
 sys.path.append( mymodule_dir )
 import printer
 
