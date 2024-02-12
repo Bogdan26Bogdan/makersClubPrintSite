@@ -88,7 +88,6 @@ class Database:
 
         self._clean_connections()
 
-
     def find_object(
         self, collection: str, primary_key: dict, return_values: dict = None
     ) -> list[dict]:
@@ -106,6 +105,18 @@ class Database:
 
         self._clean_connections()
         return values
+
+    def update_object(
+        self, collection: str, primary_key: dict, new_values: dict
+    ) -> None:
+        """Updates the object with the new values"""
+        self._check_connections()
+        collection = self.db[collection]
+
+        collection.update_one(primary_key, {"$set": new_values})
+
+        self._clean_connections()
+        return None
 
 
 if __name__ == "__main__":

@@ -13,6 +13,8 @@
             <ul>
                 <li><a href="{{ url_for('home') }}">Home</a></li>
                 <li><a href="{{ url_for('file_upload') }}">File Submission</a></li>
+                <li><a href="{{ url_for('update_printer_status') }}">Update Printer Status</a></li>
+                <li><a href="{{ url_for('file_download') }}">Download Files</a></li>
             </ul>
         </nav>
     </header>
@@ -21,7 +23,7 @@
         {% endblock %}
     </div>
     <footer>
-        Meetings are on Mondays.
+        Meetings are on Mondays from 12 to 5.
     </footer>
 </body>
 </html>
