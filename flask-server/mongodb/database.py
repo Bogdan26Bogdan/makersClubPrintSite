@@ -12,6 +12,7 @@ class Database:
         self.password = password
         self.client = None
         self.db = None
+        self._check_connections()  # This will set up the connection to the database
 
     def _get_client(self) -> None:
         """Creates a client to communicate with mongoDB"""
@@ -34,7 +35,7 @@ class Database:
         self.db = self.client[f"{database}"]
 
     def _clean_connections(self) -> None:
-        """Closes the connection to the DB once it is no longer being used."""
+        """Closes the connection to the DB."""
         if self.client is not None:
             self.client.close()
         self.client = None
@@ -53,7 +54,6 @@ class Database:
         """Returns a list of the names of all collections in the database"""
         self._check_connections()
         names = self.db.list_collection_names()
-        self._clean_connections()
 
         return names
 
@@ -75,8 +75,6 @@ class Database:
 
         objectID = collection.insert_one(value.to_dictionary())
 
-        self._clean_connections()
-
         return objectID
 
     def delete_value(self, value) -> None:
@@ -85,8 +83,6 @@ class Database:
         collection = self.db[value.data]
 
         collection.delete_one(value.to_dictionary())
-
-        self._clean_connections()
 
     def find_object(
         self, collection: str, primary_key: dict, return_values: dict = None
@@ -103,7 +99,6 @@ class Database:
         else:
             values = [x for x in collection.find(primary_key)]
 
-        self._clean_connections()
         return values
 
     def update_object(
@@ -114,9 +109,6 @@ class Database:
         collection = self.db[collection]
 
         collection.update_one(primary_key, {"$set": new_values})
-
-        self._clean_connections()
-        return None
 
 
 if __name__ == "__main__":
