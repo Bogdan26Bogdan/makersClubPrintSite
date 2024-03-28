@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section id="ChangeStatus" class="content">
+    <h2>Printer Update</h2>
+    <p>All printer data updates and changes</p>
+    <h3>Update Printer Status</h3>
+    <form method=post action="{{ url_for('printerUpdateSubmission') }}" enctype=multipart/form-data>
+        <!--Choose printers -->
+        <label for="Printer">Printer #</label>
+        <select id="Printer" name="Printer" required>
+        {% for printer in printers %} 
+            <option value="{{printer}}">{{printer}}</option>   
+        {% endfor %}
+        </select>
+
+        <!--Choose Order -->
+        <label for="Order">Order</label>
+        <select id="Order" name="Order" required>
+        {% for order in orders %} 
+            <option value="{{order[0]}}">{{order[1]}}</option>   
+        {% endfor %}
+        </select>
+
+        <!--Choose Status -->
+        <label for="Status">Status</label>
+        <select id="Status" name="Status" required>
+        {% for status in statuses %} 
+            <option value="{{status}}">{{status}}</option>   
+        {% endfor %}
+
+        
+        <input type=submit value=Submit>
+      </form>
+
+
+      <h3>Add new filament</h3>
+      <form method=post action="{{ url_for('addFilament') }}" enctype=multipart/form-data>
+        <input type="text" id="colour" name="colour" placeholder="Colour of Filament" required>
+        <input type="text" id="cost" name="cost" value="0.03" placeholder="Cost of Filament per gram" required>
+        <input type="text" id="type" name="type" value="PLA" placeholder="Type of Filament" required>
+
+        <input type=submit value=Submit>
+      </form>
+</section>
+{% endblock %}

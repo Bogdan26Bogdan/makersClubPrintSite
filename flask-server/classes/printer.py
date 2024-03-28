@@ -1,5 +1,12 @@
 from data import Data
 
+STATUSES = [
+    "Working",
+    "Broken",
+    "Needs love",
+    "On job",
+]
+
 
 class Printer(Data):
     """Depicts the printer object"""

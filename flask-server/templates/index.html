@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section id="home" class="content">
+    <h2>Welcome to the 3D Printing Club!</h2>
+    <p>Explore our website to learn more about our club.</p>
+</section>
+
+
+<section id="printerStatus" class="content printerStatus">
+    <div class="split left">
+        <h2>Current Printer Status</h2>
+        <!-- Display current printer status here -->
+        {% for printer in printers %}
+            <p>Printer {{printer[0]}}: {{printer[1]}}</p>
+        {% endfor %}
+    </div>
+    <div class="split right">
+        <h2>Upcoming Prints</h2>
+        <!-- Display upcoming prints in a table here -->
+        <table>
+            <tr>
+                <th>Print ID</th>
+                <th>Model</th>
+                <th>Estimated Start Time</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Model A</td>
+                <td>12:00 PM</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Model B</td>
+                <td>1:00 PM</td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </table>
+    </div>
+</section>
+{% endblock %}
+
+
+

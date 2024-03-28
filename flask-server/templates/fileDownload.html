@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<section id="fileDownload" class="content">
+    <h2>Download Files</h2>
+    <p>Click the links below to download the files you need.</p>
+    {% for file in files %}
+        <a href="{{ url_for('download_file', order_number=file[0]) }}">{{ file[1] }}</a><br>
+    {% endfor %}
+</section>
+{% endblock %}
