@@ -19,10 +19,6 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
-load_dotenv()
-DB_USERNAME = os.environ.get("db_username")
-DB_PASSWORD = os.environ.get("db_password")
-
 # adds the classes folder to the path
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, "classes")
@@ -40,6 +36,10 @@ from file import File
 import printer
 from filament import Filament
 
+load_dotenv()
+DB_USERNAME = os.environ.get("db_username")
+DB_PASSWORD = os.environ.get("db_password")
+db = database.Database(DB_USERNAME, DB_PASSWORD)
 
 app = Flask(__name__)
 # Implements CORS
@@ -93,9 +93,6 @@ def file_submittion():
         # Create the file object that we will be uploading to the db
         file_obj = File(ID, order_obj.order_number, file)
 
-        # Create a database object
-        db = database.Database(DB_USERNAME, DB_PASSWORD)
-
         # Upload the order and file to the database
         db.add_value(order_obj)
         db.add_value(file_obj)
@@ -106,9 +103,6 @@ def file_submittion():
 
 @app.route("/flask/testing/")
 def testing_page():
-    # Create a database object
-    db = database.Database(DB_USERNAME, DB_PASSWORD)
-
     # Get all the orders
     search = {"data": "Order"}
     returned = {"_id": 0, "print_title": 1, "filament_colour": 1, "order_date": 1}
@@ -126,9 +120,6 @@ def hello():
 
 @app.route("/index")
 def home():
-    # Create a database object
-    db = database.Database(DB_USERNAME, DB_PASSWORD)
-
     # Get all the orders
     search = {"data": "Printer"}
     returned = {"_id": 0, "ID": 1, "status": 1}
@@ -146,7 +137,6 @@ def file_upload():
 
 @app.route("/updatePrinterStatus")
 def update_printer_status():
-    db = database.Database(DB_USERNAME, DB_PASSWORD)
     search = {"data": "Printer"}
     printers = db.find_object("Printer", search)
     printers = [i["ID"] for i in printers]
@@ -199,7 +189,6 @@ def addFilament():
             ),
             request.form["material"] if "material" in request.form else "PLA",
         )
-        db = database.Database(DB_USERNAME, DB_PASSWORD)
         db.add_value(fil)
 
     return redirect(url_for("update_printer_status"))
@@ -207,7 +196,6 @@ def addFilament():
 
 @app.route("/fileDownload")
 def file_download():
-    db = database.Database(DB_USERNAME, DB_PASSWORD)
     search = {"data": "File"}
     returned = {"_id": 0, "order_number": 1}
     files = db.find_object("File", search, returned)
@@ -224,7 +212,6 @@ def file_download():
 
 @app.route("/download/<order_number>")
 def download_file(order_number):
-    db = database.Database(DB_USERNAME, DB_PASSWORD)
     search = {"data": "File", "order_number": order_number}
     returned = {"_id": 0, "file": 1}
     file = db.find_object("File", search, returned)
