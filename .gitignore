@@ -2,5 +2,5 @@ env/
 .env
 __pycache__
 *.swp
-
+.venv/
 
