@@ -1,0 +1,47 @@
+{% include 'base.html' %}
+
+<div class="relative overflow-hidden shadow-md rounded-lg">
+  <table class="table-fixed w-full text-left">
+    <thead
+      class="uppercase bg-[#6b7280] text-[#e5e7eb]"
+      style="background-color: rgb(107, 114, 128); color: rgb(229, 231, 235)"
+    >
+      <tr>
+        <td class="py-4 border border-gray-300 text-center p-4">Name</td>
+        <td class="py-4 border border-gray-300 text-center p-4">Print Name</td>
+        <td class="py-4 border border-gray-300 text-center p-4">Grams Used</td>
+        <td class="py-4 border border-gray-300 text-center p-4">Duration</td>
+        <td class="py-4 border border-gray-300 text-center p-4">Color</td>
+      </tr>
+    </thead>
+    <tbody
+      class="bg-white text-gray-500 bg-[#FFFFFF] text-[#6b7280]"
+      style="background-color: rgb(255, 255, 255); color: rgb(107, 114, 128)"
+    >
+      {% for print in prints %}
+
+      <tr class="py-1" style="">
+        <td class="py-1 border border-gray-300 text-center p-4">
+          {{ print.Name }}
+        </td>
+        <td class="py-1 border border-gray-300 text-center p-4">
+          {{ print.PrintName }}
+          <form action="/download/{{ print.id }}" method="get">
+            <button type="submit">Download</button>
+          </form>
+        </td>
+        <td class="py-1 border border-gray-300 text-center p-4">
+          {{ print.GramsUsed }}
+        </td>
+        <td class="py-1 border border-gray-300 text-center p-4">
+          {{ print.Duration }}
+        </td>
+        <td class="py-1 border border-gray-300 text-center p-4">
+          {{ print.Color }}
+        </td>
+      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
