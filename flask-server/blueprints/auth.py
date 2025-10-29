@@ -121,7 +121,17 @@ def signup():
             return signup_failed()
 
         if not MagicValue.is_magic_value_valid(magic_value):
+            #TODO: Change prints to proper logging
+            print("Magic value is not valid")
             return signup_failed()
+        mv_role = None
+        with Session(db.create_engine_instance()) as sql_session:
+            mv = sql_session.query(MagicValue).filter_by(value=magic_value).first()
+            assert mv is not None, "Magic value should exist here"
+            mv_role = (
+                sql_session.query(user_and_role.Role).filter_by(id=mv.Roleid).first()
+            )
+            mv_role = mv_role.role if mv_role else "user"
 
         with Session(db.create_engine_instance(echo=True)) as sql_session:
             existing_user = (
@@ -129,6 +139,7 @@ def signup():
             )
             if existing_user:
                 # TODO: Create a way to differentiate that the user already exists
+                print("User already exists")
                 return signup_failed()
 
             new_user = user_and_role.User(
@@ -138,11 +149,12 @@ def signup():
                 date_created=datetime.now().isoformat(),
             )
             user_role = (
-                sql_session.query(user_and_role.Role).filter_by(role="user").first()
+                sql_session.query(user_and_role.Role).filter_by(role=mv_role).first()
             )
 
             if not user_role:
                 # TODO: THis is more of a sanity check but this does need to be improved
+                print("Role does not exist")
                 return signup_failed()
 
             new_user.roles.append(user_role)
@@ -155,9 +167,16 @@ def signup():
         return render_template("signup.html", failed_signup=failed_signup)
 
 
-@auth.route("/generate-magic-value")
+@auth.route("/generate-magic-value", defaults={"user_role": "user"})
+@auth.route("/generate-magic-value/<user_role>")
 @login_required
 @required_role("admin")
-def generate_magic_value():
-    magic_value = MagicValue.generate_magic_value()
+def generate_magic_value(user_role: str) -> str:
+    print(f"Generating magic value for role: {user_role}")
+    # Validate that it is a valid role
+    valid_role = user_and_role.Role.valid_role(user_role)
+    if not valid_role:
+        return "A valid role was not provided. Could not generate a magic value."
+
+    magic_value = MagicValue.generate_magic_value(role=user_role)
     return magic_value

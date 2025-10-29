@@ -2,7 +2,9 @@ from db.db import Base, create_engine_instance
 from sqlalchemy import Column, Integer, String
 from datetime import datetime
 import secrets
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, mapped_column, Mapped, selectinload
+from sqlalchemy import ForeignKey, select
+from db.user_and_role import Role
 
 
 class MagicValue(Base):
@@ -15,12 +17,25 @@ class MagicValue(Base):
         String(100), nullable=False, default=datetime.now().isoformat()
     )
     valid = Column(Integer, nullable=False, default=1)
+    Roleid: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
 
     @staticmethod
-    def generate_magic_value():
+    def generate_magic_value(role: str = "user") -> str:
         with Session(create_engine_instance()) as sql_session:
+            user_role_id = None
+            with Session(create_engine_instance()) as sql_session:
+                stmt = (
+                    select(Role)
+                    .where(Role.role == role)
+                )
+                user_role = sql_session.scalars(stmt).first()
+                user_role_id = user_role.id if user_role else None
+            assert (
+                user_role_id is not None
+            ), "User role must exist to generate magic value"
+
             magic_value = secrets.token_urlsafe(16)
-            sql_session.add(MagicValue(value=magic_value))
+            sql_session.add(MagicValue(value=magic_value, Roleid=user_role.id))
             sql_session.commit()
             return magic_value
 
