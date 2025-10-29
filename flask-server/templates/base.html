@@ -1,7 +1,19 @@
-<head>
-  <link
-    rel="stylesheet"
-    href="{{url_for('static',filename='dist/output.css')}}"
-  />
-</head>
-{% include 'scripts.html' %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Makers Club Print Site</title>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='dist/output.css')}}"
+    />
+  </head>
+  <body class="bg-primary-500">
+    <div class="flex flex-col h-screen">
+      {% include 'header.html' %}
+      <div class="flex-grow">{% block content %}{% endblock %}</div>
+    </div>
+  </body>
+  {% include 'scripts.html' %}
+</html>

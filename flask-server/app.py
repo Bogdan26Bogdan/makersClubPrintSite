@@ -5,25 +5,28 @@ from db import db
 from db.print_tracker import PrintTracker, validate_GramsUsed
 from db.print_file import PrintFile
 from db.user_and_role import User, Role
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import select
 from datetime import datetime
 from flask_login import LoginManager, current_user, login_required
 from werkzeug.security import generate_password_hash
 from blueprints.auth import required_role
+from dotenv import load_dotenv
+import os
 
 from datetime import datetime
 
 app = flask.Flask(__name__)
+load_dotenv("instance/.env")
 
 
 @app.route("/")
 def home():
-    if current_user.is_authenticated:
-        return f"Welcome, {current_user.name}!"
-    return "Welcome to the Makers Club Print Site!"
+    return flask.render_template("home.html")
+
 
 def app_factory():
-    app.config["SECRET_KEY"] = "you"
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
     with Session(db.create_engine_instance()) as sql_session:
         test_user = User(
@@ -51,13 +54,11 @@ def app_factory():
             if not sql_session.query(Role).filter_by(role=role.role).first():
                 sql_session.add(role)
                 sql_session.commit()
-            else:
-                role = sql_session.query(Role).filter_by(role=role.role).first()
 
-        if not sql_session.query(User).filter_by(email=test_user_2.email).first():
-            sql_session.add(test_user)
-            sql_session.add(test_user_2)
-            sql_session.commit()
+        for user in users_to_add:
+            if not sql_session.query(User).filter_by(email=user.email).first():
+                sql_session.add(user)
+                sql_session.commit()
 
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
@@ -67,13 +68,24 @@ def app_factory():
     def load_user(user_id: int):
         from db.user_and_role import User
 
-        with Session(db.create_engine_instance()) as sql_session:
-            return sql_session.get(User, user_id)
+        with Session(
+            db.create_engine_instance(), expire_on_commit=False
+        ) as sql_session:
+            # Eager load the roles of the user, using selectinload so that the .has_role method works without additional queries
+            stmt = (
+                select(User)
+                .where(User.id == user_id)
+                .options(selectinload(User.roles))
+            )
+            return sql_session.scalars(stmt).first()
 
     from blueprints.auth import auth as auth_blueprint
     from blueprints.print_tracker import print_tracker_bp
+    from blueprints.admin import admin_bp
+
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(print_tracker_bp)
+    app.register_blueprint(admin_bp)
 
     Talisman(app)
 

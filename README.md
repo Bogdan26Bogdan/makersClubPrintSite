@@ -12,6 +12,7 @@ Can be installed by running `pip install -r requirements.txt`
 - Sqlalchemy
 - Talisman
 - Flask-login
+- python-dotenv
 
 ### Tailwindcss + Flowbite requirements
 

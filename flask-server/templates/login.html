@@ -1,48 +1,59 @@
-{% include 'base.html' %}
-
-
-
-{% if failed_login %}
+{% extends 'base.html' %} {% block content %} {% if failed_login %}
 <p class="text-red-600 text-center mb-4">
   Invalid email or password. Please try again.
 </p>
 {% endif %}
-
-<form method="POST" action="/login" class="w-full max-w-sm mx-auto">
-  <!-- Hidden next for seeing next page to go to -->
-  {% if next %}
-  <input type="hidden" name="next" value="{{next}}" />
-  {% endif %}
-
-  <!-- Email input -->
-  <div class="mb-4 w-full">
-    <label for="512a0580-191c-4597-9884-e2de995cecd6"></label>
-    <input
-      name="email"
-      placeholder="Your email address"
-      type="text"
-      id="512a0580-191c-4597-9884-e2de995cecd6"
-      class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
-    />
-  </div>
-
-  <!-- Password input -->
-  <div class="mb-4 w-full">
-    <label for="c37c3026-30b3-4539-bb3b-3656a54a297f"></label>
-    <input
-      name="password"
-      placeholder="Your password"
-      type="password"
-      id="c37c3026-30b3-4539-bb3b-3656a54a297f"
-      class="w-full block rounded-lg border dark:border-none dark:bg-neutral-600 py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
-    />
-  </div>
-
-  <!-- Submit button -->
-  <button
-    type="submit"
-    class="w-full inline-block px-6 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+<div class="mt-2 h-full flex items-center">
+  <form
+    method="POST"
+    action="/login"
+    class="w-full max-w-sm m-auto border p-6 rounded-lg shadow-lg bg-primary-300"
   >
-    Login
-  </button>
-</form>
+    <div class="">
+      <!-- Hidden next for seeing next page to go to -->
+      {% if next %}
+      <input type="hidden" name="next" value="{{next}}" />
+      {% endif %}
+
+      <!-- Email input -->
+      <div class="mb-4 w-full">
+        <label for="512a0580-191c-4597-9884-e2de995cecd6"></label>
+        <input
+          name="email"
+          placeholder="Your email address"
+          type="text"
+          id="512a0580-191c-4597-9884-e2de995cecd6"
+          class="w-full block rounded-lg border dark:border-none dark:bg-white py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
+        />
+      </div>
+
+      <!-- Password input -->
+      <div class="mb-4 w-full">
+        <label for="c37c3026-30b3-4539-bb3b-3656a54a297f"></label>
+        <input
+          name="password"
+          placeholder="Your password"
+          type="password"
+          id="c37c3026-30b3-4539-bb3b-3656a54a297f"
+          class="w-full block rounded-lg border dark:border-none dark:bg-white py-[9px] px-3 pr-4 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:outline-none"
+        />
+      </div>
+
+      <!-- Submit button -->
+      <button
+        type="submit"
+        class="w-full inline-block px-6 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+      >
+        Login
+      </button>
+    </div>
+    <a
+      href="{{ url_for('auth.signup') }}"
+      class="block text-center mt-4 text-white hover:underline"
+    >
+      Don't have an account? Sign up here.
+    </a>
+  </form>
+</div>
+
+{% endblock content %}

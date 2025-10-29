@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
 from db.db import Base
 from typing import Tuple
 
@@ -7,7 +8,7 @@ class PrintTracker(Base):
     __tablename__ = "print_tracker"
 
     id = Column(Integer, primary_key=True)
-    Name = Column(String(255), nullable=False)
+    Userid: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     PrintName = Column(String(255), nullable=False)
     GramsUsed = Column(
         Integer, nullable=False

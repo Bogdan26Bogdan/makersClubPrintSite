@@ -1,4 +1,8 @@
-{% include 'base.html' %}
+{% extends 'base.html' %} 
+{% block content %} 
+{% if failed_signup %}
+<div class="mx-auto mt-2 mb-6 p-2 bg-red-700 text-center text-white rounded-2xl w-2xl">Signup failed. Please try again.</div>
+{% endif %}
 
 <form method="POST" action="/signup" class="w-full max-w-sm mx-auto">
   <div class="mb-6">
@@ -11,7 +15,7 @@
       type="text"
       id="name"
       name="name"
-      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
       placeholder="Your Name"
       required
     />
@@ -41,7 +45,7 @@
       type="text"
       id="magic_value"
       name="magic_value"
-      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
       placeholder="The magic value for you to sign up with"
       required
     />
@@ -68,3 +72,4 @@
     Submit
   </button>
 </form>
+{% endblock content %}

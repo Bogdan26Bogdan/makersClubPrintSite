@@ -1,9 +1,10 @@
-{% include 'base.html' %}
+{% extends 'base.html' %}
+{% block content %}
 
-<div class="relative overflow-hidden shadow-md rounded-lg">
+<div class="mt-2 mx-2 relative overflow-hidden shadow-md rounded-lg">
   <table class="table-fixed w-full text-left">
     <thead
-      class="uppercase bg-[#6b7280] text-[#e5e7eb]"
+      class="uppercase bg-primary-400 text-[#e5e7eb]"
       style="background-color: rgb(107, 114, 128); color: rgb(229, 231, 235)"
     >
       <tr>
@@ -15,19 +16,19 @@
       </tr>
     </thead>
     <tbody
-      class="bg-white text-gray-500 bg-[#FFFFFF] text-[#6b7280]"
+      class="bg-white text-black"
       style="background-color: rgb(255, 255, 255); color: rgb(107, 114, 128)"
     >
       {% for print in prints %}
 
       <tr class="py-1" style="">
         <td class="py-1 border border-gray-300 text-center p-4">
-          {{ print.Name }}
+          {{ print.name }}
         </td>
         <td class="py-1 border border-gray-300 text-center p-4">
           {{ print.PrintName }}
           <form action="/download/{{ print.id }}" method="get">
-            <button type="submit">Download</button>
+            <button class="text-purple-700" type="submit">Download</button>
           </form>
         </td>
         <td class="py-1 border border-gray-300 text-center p-4">
@@ -45,3 +46,5 @@
     </tbody>
   </table>
 </div>
+
+{% endblock content %}

@@ -33,10 +33,7 @@ def required_role(role: str):
             This needs to work with flask, so stealing the way that
             flask_login does it.
             """
-            has_role = False
-            with Session(db.create_engine_instance()) as db_session:
-                user = db_session.get(user_and_role.User, current_user.id)
-                has_role = role_to_check_against in user.roles
+            has_role = current_user.has_role(role)
             # Check that the user has the roles
             if current_user.is_authenticated and has_role:
                 if callable(getattr(current_app, "ensure_sync", None)):
@@ -163,4 +160,4 @@ def signup():
 @required_role("admin")
 def generate_magic_value():
     magic_value = MagicValue.generate_magic_value()
-    return {"magic_value": magic_value}
+    return magic_value

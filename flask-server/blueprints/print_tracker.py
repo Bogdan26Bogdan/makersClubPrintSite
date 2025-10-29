@@ -2,10 +2,12 @@ from datetime import datetime
 import flask
 from flask import Blueprint, current_app, redirect, url_for
 from flask_login import current_user, login_required
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from db import db
 from db.print_tracker import PrintTracker, validate_GramsUsed
 from db.print_file import PrintFile
+from db.user_and_role import User
 from blueprints.auth import required_role
 import io
 
@@ -14,13 +16,14 @@ print_tracker_bp = Blueprint("print_tracker", __name__)
 
 
 @print_tracker_bp.route("/submit", methods=["GET", "POST"])
+@login_required
 def submit_print():
     # TODO: Add form validation and error handling
     if flask.request.method == "POST":
         # Handle file submission logic here
 
         new_print = PrintTracker(
-            Name=flask.request.form.get("name"),
+            Userid=current_user.id,
             PrintName=flask.request.form.get("print_name"),
             Printer="",
             GramsUsed=validate_GramsUsed(flask.request.form.get("grams_used"))[1],
@@ -54,18 +57,32 @@ def submit_print():
 
 @print_tracker_bp.route("/prints")
 @login_required
-@required_role("admin")
 def view_prints():
+    admin = current_user.has_role("admin")
+    
+    stmt = select(
+            PrintTracker.PrintName,
+            PrintTracker.GramsUsed,
+            PrintTracker.Duration,
+            PrintTracker.Color,
+            User.name,
+        ).join(User, User.id == PrintTracker.Userid)
+    if not admin:
+        stmt = stmt.where(PrintTracker.Userid == current_user.id)
+
     with Session(db.create_engine_instance()) as sql_session:
-        prints = sql_session.query(PrintTracker).all()
+        prints = sql_session.execute(stmt).all()
         return flask.render_template("print_tracker.html", prints=prints)
+
 
 @print_tracker_bp.route("/download/<int:print_id>")
 @login_required
 @required_role("admin")
 def download_print_file(print_id):
     with Session(db.create_engine_instance()) as sql_session:
-        print_file = sql_session.query(PrintFile).filter_by(print_tracker_id=print_id).first()
+        print_file = (
+            sql_session.query(PrintFile).filter_by(print_tracker_id=print_id).first()
+        )
         if print_file:
             return flask.send_file(
                 io.BytesIO(print_file.file_data),

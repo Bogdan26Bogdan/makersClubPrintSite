@@ -23,6 +23,9 @@ class User(UserMixin, Base):
     name: Mapped[str] = mapped_column(nullable=False)
     roles: Mapped[List["Role"]] = relationship(secondary=association_table)
 
+    def has_role(self, role_name: str) -> bool:
+        return any(role.role == role_name for role in self.roles)
+
 class Role(Base):
     __tablename__ = "roles"
 
