@@ -1,6 +1,10 @@
-# makersClubPrintSite
+# MakersClubPrintSite
 
 A simple site to allow members to submit their files to be printed and to make it easier for the executives to manage all of the prints.
+
+## Running demo
+
+After installing the requirements, navigate to the flask-server folder and run `python app.py`
 
 ## Requirements
 
@@ -17,8 +21,9 @@ Can be installed by running `pip install -r requirements.txt`
 ### Tailwindcss + Flowbite requirements
 
 The basics can be taken from flowbites flask guide at: https://flowbite.com/docs/getting-started/flask/
+A output.css is included for convenience.
 
-Commands in order:
+Commands in order to generate a new output.css:
 
 1. `npm install tailwindcss @tailwindcss/cli --save-dev`
 2. Make sure the static/src/input.css exists
