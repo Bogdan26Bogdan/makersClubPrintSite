@@ -11,7 +11,7 @@ from datetime import datetime
 from flask_login import LoginManager, current_user, login_required
 from werkzeug.security import generate_password_hash
 from blueprints.auth import required_role
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 import os
 
 from datetime import datetime
@@ -25,39 +25,55 @@ def home():
     return flask.render_template("home.html")
 
 
+def initial_setup():
+    """This should be run only the first time the app is started and creates the initial admin user."""
+    # Sanity check
+    with Session(db.create_engine_instance()) as sql_session:
+        users = len(sql_session.query(User).all())
+        if users > 0:
+            print("Users already exist, skipping initial admin setup.")
+        else:
+            # Create initial admin user
+            userName = input("Enter admin username: ")
+            email = input("Enter admin email: ")
+            password = input("Enter admin password: ")
+            hashed_password = generate_password_hash(password)
+            with Session(db.create_engine_instance()) as sql_session:
+                admin_role = sql_session.query(Role).filter_by(role="admin").first()
+                new_admin = User(
+                    name=userName,
+                    email=email,
+                    password=hashed_password,
+                    date_created=datetime.now(),
+                    roles=[admin_role],
+                )
+                sql_session.add(new_admin)
+                sql_session.commit()
+
+    # set the secret key.
+    if os.getenv("SECRET_KEY") == "SUPERSECRETKEY":
+        print("Generating new secret key...")
+        secret_key = os.urandom(24)
+        set_key("instance/.env", "SECRET_KEY", secret_key.hex())
+        load_dotenv("instance/.env")
+
+    set_key("instance/.env", "FIRST_START", "False")
+    print("Initial setup complete.")
+
+
 def app_factory():
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
     with Session(db.create_engine_instance()) as sql_session:
-        test_user = User(
-            email="test@example.com",
-            password=generate_password_hash("password123"),
-            date_created=datetime.now(),
-            name="testuser",
-        )
-        test_user_2 = User(
-            email="test2@example.com",
-            password=generate_password_hash("password123"),
-            date_created=datetime.now(),
-            name="testuser2",
-        )
+
         role = Role(role="admin")
         role2 = Role(role="user")
 
-        users_to_add = [test_user, test_user_2]
         roles_to_add = [role, role2]
-
-        test_user.roles.append(role)
-        test_user_2.roles.append(role2)
 
         for role in roles_to_add:
             if not sql_session.query(Role).filter_by(role=role.role).first():
                 sql_session.add(role)
-                sql_session.commit()
-
-        for user in users_to_add:
-            if not sql_session.query(User).filter_by(email=user.email).first():
-                sql_session.add(user)
                 sql_session.commit()
 
     login_manager = LoginManager()
@@ -94,5 +110,6 @@ app_factory()
 
 
 if __name__ == "__main__":
-
+    if os.getenv("FIRST_START") != "False":
+        initial_setup()
     app.run(debug=True)
