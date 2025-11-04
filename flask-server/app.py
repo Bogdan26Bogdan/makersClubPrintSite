@@ -5,6 +5,7 @@ from db import db
 from db.print_tracker import PrintTracker, validate_GramsUsed
 from db.print_file import PrintFile
 from db.user_and_role import User, Role
+from db.printer import Printer
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from datetime import datetime
@@ -27,8 +28,9 @@ def home():
 
 def initial_setup():
     """This should be run only the first time the app is started and creates the initial admin user."""
-    # Sanity check
+    #Create initial roles
     with Session(db.create_engine_instance()) as sql_session:
+        # Sanity check
         users = len(sql_session.query(User).all())
         if users > 0:
             print("Users already exist, skipping initial admin setup.")
@@ -49,6 +51,26 @@ def initial_setup():
                 )
                 sql_session.add(new_admin)
                 sql_session.commit()
+
+    # Create the printers
+    with Session(db.create_engine_instance()) as sql_session:
+        printers = sql_session.query(Printer).all()
+        if len(printers) == 2:
+            print("Printers already exist, skipping printer setup.")
+        else:
+            printer1 = Printer(
+                Name="Printer 1",
+                Status="Idle",
+                PrintInProgress=None,
+            )
+            printer2 = Printer(
+                Name="Printer 2",
+                Status="Idle",
+                PrintInProgress=None,
+            )
+            sql_session.add_all([printer1, printer2])
+            sql_session.commit()
+
 
     # set the secret key.
     if os.getenv("SECRET_KEY") == "SUPERSECRETKEY":

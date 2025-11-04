@@ -8,6 +8,7 @@ from db import db
 from db.print_tracker import PrintTracker, validate_GramsUsed
 from db.print_file import PrintFile
 from db.user_and_role import User
+from db.printer import Printer
 from blueprints.auth import required_role
 import io
 
@@ -59,14 +60,15 @@ def submit_print():
 @login_required
 def view_prints():
     admin = current_user.has_role("admin")
-    
+
     stmt = select(
-            PrintTracker.PrintName,
-            PrintTracker.GramsUsed,
-            PrintTracker.Duration,
-            PrintTracker.Color,
-            User.name,
-        ).join(User, User.id == PrintTracker.Userid)
+        PrintTracker.id,
+        PrintTracker.PrintName,
+        PrintTracker.GramsUsed,
+        PrintTracker.Duration,
+        PrintTracker.Color,
+        User.name,
+    ).join(User, User.id == PrintTracker.Userid)
     if not admin:
         stmt = stmt.where(PrintTracker.Userid == current_user.id)
 
@@ -91,3 +93,12 @@ def download_print_file(print_id):
             )
         else:
             return "File not found", 404
+
+
+
+
+        
+        
+
+
+    

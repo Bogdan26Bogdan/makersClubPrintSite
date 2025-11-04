@@ -1,8 +1,7 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 
 <div class="mt-2 mx-2 relative overflow-hidden shadow-md rounded-lg">
-  <table class="table-fixed w-full text-left">
+  <table class="table-auto w-full text-left">
     <thead
       class="uppercase bg-primary-400 text-[#e5e7eb]"
       style="background-color: rgb(107, 114, 128); color: rgb(229, 231, 235)"
@@ -13,6 +12,10 @@
         <td class="py-4 border border-gray-300 text-center p-4">Grams Used</td>
         <td class="py-4 border border-gray-300 text-center p-4">Duration</td>
         <td class="py-4 border border-gray-300 text-center p-4">Color</td>
+        {% if current_user.has_role("admin") %}
+        <td class="py-4 border border-gray-300 text-center p-4">Admin Actions</td>
+        {% endif %}
+
       </tr>
     </thead>
     <tbody
@@ -40,6 +43,13 @@
         <td class="py-1 border border-gray-300 text-center p-4">
           {{ print.Color }}
         </td>
+        {% if current_user.has_role("admin") %}
+        <td class="py-1 border border-gray-300 text-center p-4">
+          <form action="/admin/action/{{ print.id }}">
+            <button class="text-red-700" type="submit">Edit</button>
+          </form>
+        </td>
+        {% endif %}
       </tr>
 
       {% endfor %}
