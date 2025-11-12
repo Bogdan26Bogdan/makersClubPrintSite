@@ -61,14 +61,44 @@ def submit_print():
 def view_prints():
     admin = current_user.has_role("admin")
 
-    stmt = select(
-        PrintTracker.id,
-        PrintTracker.PrintName,
-        PrintTracker.GramsUsed,
-        PrintTracker.Duration,
-        PrintTracker.Color,
-        User.name,
-    ).join(User, User.id == PrintTracker.Userid)
+    stmt = (
+        select(
+            PrintTracker.id,
+            PrintTracker.PrintName,
+            PrintTracker.GramsUsed,
+            PrintTracker.Duration,
+            PrintTracker.Color,
+            User.name,
+        )
+        .join(User, User.id == PrintTracker.Userid)
+        .where(PrintTracker.Completed == False)
+    )
+    if not admin:
+        stmt = stmt.where(PrintTracker.Userid == current_user.id)
+
+    with Session(db.create_engine_instance()) as sql_session:
+        prints = sql_session.execute(stmt).all()
+        return flask.render_template("print_tracker.html", prints=prints)
+
+
+@print_tracker_bp.route("/completed_prints")
+@login_required
+def view_completed_prints():
+    admin = current_user.has_role("admin")
+
+    stmt = (
+        select(
+            PrintTracker.id,
+            PrintTracker.PrintName,
+            PrintTracker.GramsUsed,
+            PrintTracker.Duration,
+            PrintTracker.Color,
+            User.name,
+        )
+        .join(User, User.id == PrintTracker.Userid)
+        .where(PrintTracker.Completed == True)
+        .order_by(PrintTracker.Submitted.desc())
+    )
     if not admin:
         stmt = stmt.where(PrintTracker.Userid == current_user.id)
 
@@ -93,12 +123,3 @@ def download_print_file(print_id):
             )
         else:
             return "File not found", 404
-
-
-
-
-        
-        
-
-
-    

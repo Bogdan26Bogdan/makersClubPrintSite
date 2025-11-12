@@ -13,9 +13,10 @@
         <td class="py-4 border border-gray-300 text-center p-4">Duration</td>
         <td class="py-4 border border-gray-300 text-center p-4">Color</td>
         {% if current_user.has_role("admin") %}
-        <td class="py-4 border border-gray-300 text-center p-4">Admin Actions</td>
+        <td class="py-4 border border-gray-300 text-center p-4">
+          Admin Actions
+        </td>
         {% endif %}
-
       </tr>
     </thead>
     <tbody
@@ -55,6 +56,13 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
+<div class="w-full-4 m-2 flex flex-row-reverse">
+  <form action="{{ url_for('print_tracker.view_completed_prints') }}" method="get">
+    <button type="submit" class="p-6 bg-primary-300 rounded-lg shadow-lg">
+      See completed prints
+    </button>
+  </form>
 </div>
 
 {% endblock content %}

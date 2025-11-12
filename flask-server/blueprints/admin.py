@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from db import db
 from db.print_tracker import PrintTracker
 from db.printer import Printer
-
+from db.printer import STATUS_IDLE
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -15,7 +15,12 @@ admin_bp = Blueprint("admin", __name__)
 @login_required
 @required_role("admin")
 def admin_dashboard():
-    return render_template("admin_dashboard.html")
+    printers = []
+
+    with Session(db.create_engine_instance()) as sql_session:
+        printers = sql_session.query(Printer).all()
+
+        return render_template("admin_dashboard.html", printers=printers)
 
 
 @admin_bp.route("/admin/action/<int:print_id>")
@@ -56,3 +61,19 @@ def start_print(print_id):
         sql_session.commit()
 
     return f"Print job {print_id} started on printer {printer_id}."
+
+
+@admin_bp.route("/finish_print/<int:printer_id>", methods=["POST"])
+@login_required
+@required_role("admin")
+def finish_print(printer_id: int):
+    printer_obj = None
+    with Session(db.create_engine_instance()) as sql_session:
+        printer_obj = sql_session.query(Printer).filter_by(id=printer_id).first()
+        if not printer_obj:
+            return "Printer not found", 404
+
+    printer_obj.finish_print()
+
+    return f"Print job on printer {printer_id} finished."
+
