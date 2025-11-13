@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from blueprints.auth import required_role
 from flask import request
@@ -60,7 +60,7 @@ def start_print(print_id):
         printer_id = printer_obj.id
         sql_session.commit()
 
-    return f"Print job {print_id} started on printer {printer_id}."
+    return redirect(url_for("admin.admin_dashboard"))
 
 
 @admin_bp.route("/finish_print/<int:printer_id>", methods=["POST"])
@@ -75,5 +75,4 @@ def finish_print(printer_id: int):
 
     printer_obj.finish_print()
 
-    return f"Print job on printer {printer_id} finished."
-
+    return redirect(url_for("admin.admin_dashboard"))

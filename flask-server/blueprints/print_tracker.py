@@ -23,6 +23,8 @@ def submit_print():
     if flask.request.method == "POST":
         # Handle file submission logic here
 
+        # TODO: Check if they are allowed to submit a print (Limit the number of submittions in a day).
+
         new_print = PrintTracker(
             Userid=current_user.id,
             PrintName=flask.request.form.get("print_name"),
@@ -48,7 +50,7 @@ def submit_print():
             sql_session.add(new_file)
             sql_session.commit()
 
-        return "File submitted successfully!"
+        return redirect(url_for("print_tracker.view_prints"))
     elif flask.request.method == "GET":
         return flask.render_template("submit_print.html")
 

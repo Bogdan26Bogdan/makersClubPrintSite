@@ -57,10 +57,16 @@
     </tbody>
   </table>
 </div>
+
 <div class="w-full-4 m-2 flex flex-row-reverse">
-  <form action="{{ url_for('print_tracker.view_completed_prints') }}" method="get">
+  <form class="ml-2" action="{{ url_for('print_tracker.view_completed_prints') }}" method="get">
     <button type="submit" class="p-6 bg-primary-300 rounded-lg shadow-lg">
       See completed prints
+    </button>
+  </form>
+  <form  action="{{ url_for('print_tracker.view_prints') }}" method="get">
+    <button type="submit" class="p-6 bg-primary-300 rounded-lg shadow-lg">
+      See all prints
     </button>
   </form>
 </div>
